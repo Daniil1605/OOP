@@ -49,6 +49,11 @@
             this.label7 = new System.Windows.Forms.Label();
             this.RouteNumberBox = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
+            this.SaveLoadBox = new System.Windows.Forms.ComboBox();
+            this.Savesr = new System.Windows.Forms.Button();
+            this.Loadsr = new System.Windows.Forms.Button();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.SuspendLayout();
             // 
             // Classes
@@ -228,11 +233,46 @@
             this.label8.TabIndex = 22;
             this.label8.Text = "RouteNumber";
             // 
+            // SaveLoadBox
+            // 
+            this.SaveLoadBox.FormattingEnabled = true;
+            this.SaveLoadBox.Location = new System.Drawing.Point(54, 214);
+            this.SaveLoadBox.Name = "SaveLoadBox";
+            this.SaveLoadBox.Size = new System.Drawing.Size(121, 24);
+            this.SaveLoadBox.TabIndex = 23;
+            // 
+            // Savesr
+            // 
+            this.Savesr.Location = new System.Drawing.Point(54, 285);
+            this.Savesr.Name = "Savesr";
+            this.Savesr.Size = new System.Drawing.Size(121, 32);
+            this.Savesr.TabIndex = 24;
+            this.Savesr.Text = "Save";
+            this.Savesr.UseVisualStyleBackColor = true;
+            this.Savesr.Click += new System.EventHandler(this.Savesr_Click);
+            // 
+            // Loadsr
+            // 
+            this.Loadsr.Location = new System.Drawing.Point(54, 247);
+            this.Loadsr.Name = "Loadsr";
+            this.Loadsr.Size = new System.Drawing.Size(121, 32);
+            this.Loadsr.TabIndex = 25;
+            this.Loadsr.Text = "Load";
+            this.Loadsr.UseVisualStyleBackColor = true;
+            this.Loadsr.Click += new System.EventHandler(this.Loadsr_Click);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(690, 486);
+            this.Controls.Add(this.Loadsr);
+            this.Controls.Add(this.Savesr);
+            this.Controls.Add(this.SaveLoadBox);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.RouteNumberBox);
             this.Controls.Add(this.label7);
@@ -286,6 +326,11 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox RouteNumberBox;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.ComboBox SaveLoadBox;
+        private System.Windows.Forms.Button Savesr;
+        private System.Windows.Forms.Button Loadsr;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
 
     }
 }

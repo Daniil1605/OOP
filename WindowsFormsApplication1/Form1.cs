@@ -6,6 +6,9 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Xml.Serialization;
 
 namespace WindowsFormsApplication1
 {
@@ -15,9 +18,8 @@ namespace WindowsFormsApplication1
         {
             InitializeComponent();
         }
-
-        
-        class Organization
+        [Serializable]
+        public class Organization 
         {
             public string Name { get; set; }
             public string Phone { get; set; }
@@ -26,9 +28,12 @@ namespace WindowsFormsApplication1
                 this.Name = Name;
                 this.Phone = Phone;
             }
-        }
 
-        class Driver : Organization
+            public Organization()
+            { }
+        }
+        [Serializable]
+        public class Driver : Organization
         {
             public string DriverName { get; set; }
             public string PriceofHour { get; set; }
@@ -38,9 +43,11 @@ namespace WindowsFormsApplication1
                 this.DriverName = DriverName;
                 this.PriceofHour = PriceofHour;
             }
+            public Driver()
+            { }
         }
-
-        class Taxi : Driver
+        [Serializable]
+        public class Taxi : Driver
         {
             public string NumberofTaxi { get; set; }
             public string Priceperkm { get; set; }
@@ -50,9 +57,11 @@ namespace WindowsFormsApplication1
                 this.Priceperkm = Priceperkm;
                 this.NumberofTaxi = NumberofTaxi;
             }
+            public Taxi()
+            { }
         }
-
-        class MiniBus : Driver
+        [Serializable]
+        public class MiniBus : Driver
         {
             public string NumberofMiniBus { get; set; }
             public string Size { get; set; }
@@ -62,9 +71,11 @@ namespace WindowsFormsApplication1
                 this.Size = Size;
                 this.NumberofMiniBus = NumberofMiniBus;
             }
+            public MiniBus()
+            { }
         }
-
-        class Bus : Driver
+        [Serializable]
+        public class Bus : Driver
         {
             public string NumberofBus { get; set; }
             public string TicketPrice { get; set; }
@@ -74,9 +85,11 @@ namespace WindowsFormsApplication1
                 this.TicketPrice = TicketPrice;
                 this.NumberofBus = NumberofBus;
             }
+            public Bus()
+            { }
         }
-
-        class Route 
+        [Serializable]
+        public class Route 
         {
             public Bus RouteBus { get; set; }
             public string RouteTime { get; set; }
@@ -87,8 +100,230 @@ namespace WindowsFormsApplication1
                 this.RouteTime = RouteTime;
                 this.RouteNumber = RouteNumber;
             }
+            public Route()
+            { }
         }
-         
+
+        public interface ISerialization
+        {
+            void Serialize(AllLists Lists, string path);
+            AllLists Deserialize(string Filepath);
+        }
+
+        public class BinarySerialization : ISerialization
+        {
+            public void Serialize(AllLists Lists, string path)
+            {
+                BinaryFormatter formatter = new BinaryFormatter();
+                using (FileStream fs = new FileStream(path, FileMode.Create))
+                {
+                    formatter.Serialize(fs, Lists);
+                }
+            }
+
+            public AllLists Deserialize(string Filepath)
+            {
+                AllLists newList;
+                BinaryFormatter formatter = new BinaryFormatter();
+                using (FileStream fs = new FileStream(Filepath, FileMode.OpenOrCreate))
+                {
+                    newList = (AllLists)formatter.Deserialize(fs);
+                }
+                return newList;
+            }
+        }
+
+        public class XMLSerialization : ISerialization
+        {
+            public void Serialize(AllLists Lists, string path)
+            {
+                XmlSerializer OrganizationListSer = new XmlSerializer(typeof(AllLists));
+                using (FileStream fx = new FileStream("Organization.xml", FileMode.Create))
+                {
+                    OrganizationListSer.Serialize(fx, Lists);
+                }
+            }
+
+            public AllLists Deserialize(string Filepath)
+            {
+                AllLists lists;
+                XmlSerializer OrganizationListDeSer = new XmlSerializer(typeof(AllLists));
+                using (FileStream fx = new FileStream("Organization.xml", FileMode.OpenOrCreate))
+                {
+                    lists = (AllLists)OrganizationListDeSer.Deserialize(fx);
+                }
+                return lists;
+            }
+        }
+
+
+        public class TextSerialization : ISerialization
+        {
+            public void Serialize(AllLists Lists, string path)
+            {
+                using (StreamWriter file = new StreamWriter("Organization.txt", false))
+                {
+                }
+                
+                    using (StreamWriter file = new StreamWriter("Organization.txt", true))
+                    {
+                        file.WriteLine("<OrganizationList>");
+                        foreach (Organization i in Lists.SecOrganizationList)
+                        {
+                            file.WriteLine("<nextel>");
+                            file.WriteLine(i.Name);
+                            file.WriteLine(i.Phone);
+                        }
+                        file.WriteLine("<DriverList>");
+                        foreach (Driver i in Lists.SecDriverList)
+                        {
+                            file.WriteLine("<nextel>");
+                            file.WriteLine(i.Name);
+                            file.WriteLine(i.Phone);
+                            file.WriteLine(i.DriverName);
+                            file.WriteLine(i.PriceofHour);
+                        }
+                        file.WriteLine("<TaxiList>");
+                        foreach (Taxi i in Lists.SecTaxiList)
+                        {
+                            file.WriteLine("<nextel>");
+                            file.WriteLine(i.Name);
+                            file.WriteLine(i.Phone);
+                            file.WriteLine(i.DriverName);
+                            file.WriteLine(i.PriceofHour);
+                            file.WriteLine(i.NumberofTaxi);
+                            file.WriteLine(i.Priceperkm);
+                        }
+                        file.WriteLine("<MiniBusList>");
+                        foreach (MiniBus i in Lists.SecMiniBusList)
+                        {
+                            file.WriteLine("<nextel>");
+                            file.WriteLine(i.Name);
+                            file.WriteLine(i.Phone);
+                            file.WriteLine(i.DriverName);
+                            file.WriteLine(i.PriceofHour);
+                            file.WriteLine(i.NumberofMiniBus);
+                            file.WriteLine(i.Size);
+                        }
+                        file.WriteLine("<BusList>");
+                        foreach (Bus i in Lists.SecBusList)
+                        {
+                            file.WriteLine("<nextel>");
+                            file.WriteLine(i.Name);
+                            file.WriteLine(i.Phone);
+                            file.WriteLine(i.DriverName);
+                            file.WriteLine(i.PriceofHour);
+                            file.WriteLine(i.NumberofBus);
+                            file.WriteLine(i.TicketPrice);
+                        }
+                        file.WriteLine("<RouteList>");
+                        foreach (Route i in Lists.SecRouteList)
+                        {
+                            file.WriteLine("<nextel>");
+                            file.WriteLine(i.RouteBus.Name);
+                            file.WriteLine(i.RouteBus.Phone);
+                            file.WriteLine(i.RouteBus.DriverName);
+                            file.WriteLine(i.RouteBus.PriceofHour);
+                            file.WriteLine(i.RouteBus.NumberofBus);
+                            file.WriteLine(i.RouteBus.TicketPrice);
+                            file.WriteLine(i.RouteTime);
+                            file.WriteLine(i.RouteNumber);
+                        }
+                    }
+                
+            }
+            
+
+            public AllLists Deserialize(string Filepath)
+            {
+                AllLists lists = new AllLists();
+                List<Organization> BufOrganizationList = new List<Organization>(0);
+                List<Driver> BufDriverList = new List<Driver>(0);
+                List<Taxi> BufTaxiList = new List<Taxi>(0);
+                List<MiniBus> BufMiniBusList = new List<MiniBus>(0);
+                List<Bus> BufBusList = new List<Bus>(0);
+                List<Route> BufRouteList = new List<Route>(0);
+                string line;
+                using (StreamReader file = new StreamReader("Organization.txt"))
+                {
+                    while ((line = file.ReadLine()) != null)
+                    {
+                        if (line == "<OrganizationList>")
+                        {
+                            while ((line = file.ReadLine()) == "<nextel>")
+                            {
+
+                                BufOrganizationList.Capacity++;
+                                BufOrganizationList.Add(new Organization(file.ReadLine(), file.ReadLine()));
+                            }
+                        }
+                        if (line == "<DriverList>")
+                        {
+                            while ((line = file.ReadLine()) == "<nextel>")
+                            {
+                                BufDriverList.Capacity++;
+                                BufDriverList.Add(new Driver(file.ReadLine(), file.ReadLine(), file.ReadLine(), file.ReadLine()));
+                            }
+                        }
+                        if (line == "<TaxiList>")
+                        {
+                            while ((line = file.ReadLine()) == "<nextel>")
+                            {
+                                BufTaxiList.Capacity++;
+                                BufTaxiList.Add(new Taxi(file.ReadLine(), file.ReadLine(), file.ReadLine(), file.ReadLine(), file.ReadLine(), file.ReadLine()));
+                            }
+                        }
+                        if (line == "<MiniBusList>")
+                        {
+                            while ((line = file.ReadLine()) == "<nextel>")
+                            {
+                                BufMiniBusList.Capacity++;
+                                BufMiniBusList.Add(new MiniBus(file.ReadLine(), file.ReadLine(), file.ReadLine(), file.ReadLine(), file.ReadLine(), file.ReadLine()));
+                            }
+                        }
+                        if (line == "<BusList>")
+                        {
+                            while ((line = file.ReadLine()) == "<nextel>")
+                            {
+                                BufBusList.Capacity++;
+                                BufBusList.Add(new Bus(file.ReadLine(), file.ReadLine(), file.ReadLine(), file.ReadLine(), file.ReadLine(), file.ReadLine()));
+                            }
+                        }
+                        if (line == "<RouteList>")
+                        {
+                            while ((line = file.ReadLine()) == "<nextel>")
+                            {
+                                Bus fn = new Bus(file.ReadLine(), file.ReadLine(), file.ReadLine(), file.ReadLine(), file.ReadLine(), file.ReadLine());
+                                BufRouteList.Capacity++;
+                                BufRouteList.Add(new Route(fn, file.ReadLine(), file.ReadLine()));
+                            }
+                        }
+                    }
+                }
+                lists.SecOrganizationList = BufOrganizationList;
+                lists.SecDriverList = BufDriverList;
+                lists.SecTaxiList = BufTaxiList;
+                lists.SecMiniBusList = BufMiniBusList;
+                lists.SecBusList = BufBusList;
+                lists.SecRouteList = BufRouteList;
+                return lists;
+            }
+        }
+
+
+
+        [Serializable]
+        public class AllLists
+        {
+            public List<Organization> SecOrganizationList;
+            public List<Driver> SecDriverList;
+            public List<Taxi> SecTaxiList;
+            public List<MiniBus> SecMiniBusList;
+            public List<Bus> SecBusList;
+            public List<Route> SecRouteList;
+            public AllLists()
+            { }
+        }
 
         private void Form1_Activated(object sender, EventArgs e)
         {
@@ -101,14 +336,12 @@ namespace WindowsFormsApplication1
         List<MiniBus> MiniBusList = new List<MiniBus>(0);
         List<Bus> BusList = new List<Bus>(0);
         List<Route> RouteList = new List<Route>(0);
-        //List<Bus> RouteBusList = new List<Bus>(0);
         public int Num_Organization = 0;
         public int Num_Driver = 0;
         public int Num_Taxi = 0;
         public int Num_MiniBus = 0;
         public int Num_Bus = 0;
         public int Num_Route = 0;
-        //public int Num_RouteBus = 0;
 
         private void Add_Class (object sender, EventArgs e)
         {
@@ -212,12 +445,8 @@ namespace WindowsFormsApplication1
                 Organizations.Items.Clear();
                 RouteList.Capacity++;
                 Num_Route++;
-                //RouteBusList.Capacity++;
-                //Num_RouteBus++;
-                //RouteBusList.Add(new Bus(NameBox.Text, PhoneBox.Text, DriverNameBox.Text, PriceofHourBox.Text, PriceperkmBox.Text, NumberBox.Text));
                 Bus fn = new Bus(NameBox.Text, PhoneBox.Text, DriverNameBox.Text, PriceofHourBox.Text, PriceperkmBox.Text, NumberBox.Text);
                 RouteList.Add(new Route(fn, RouteTimeBox.Text, RouteNumberBox.Text));
-                //RouteBusList[RouteBusList.Count - 1]
                 foreach (Route i in RouteList)
                 {
                     Organizations.Items.Add(i.RouteNumber);
@@ -259,90 +488,98 @@ namespace WindowsFormsApplication1
             NumberBox.Hide();
             RouteTimeBox.Hide();
             RouteNumberBox.Hide();
-
+            SaveLoadBox.Items.Add("Binary");
+            SaveLoadBox.Items.Add("XML");
+            SaveLoadBox.Items.Add("Text");
 
         }
 
         private void Organizations_Click(object sender, EventArgs e)
         {
-            
-            if (Classes.SelectedItem.ToString() == "Organization")
-            foreach (Organization i in OrganizationList)
+            try
             {
-                if (i.Name == Organizations.SelectedItem.ToString())
-                {
-                    NameBox.Text = i.Name;
-                    PhoneBox.Text = i.Phone;
-                }
+
+                if (Classes.SelectedItem.ToString() == "Organization")
+                    foreach (Organization i in OrganizationList)
+                    {
+                        if (i.Name == Organizations.SelectedItem.ToString())
+                        {
+                            NameBox.Text = i.Name;
+                            PhoneBox.Text = i.Phone;
+                        }
+                    }
+
+                if (Classes.SelectedItem.ToString() == "Driver")
+                    foreach (Driver i in DriverList)
+                    {
+                        if (i.DriverName == Organizations.SelectedItem.ToString())
+                        {
+                            NameBox.Text = i.Name;
+                            PhoneBox.Text = i.Phone;
+                            DriverNameBox.Text = i.DriverName;
+                            PriceofHourBox.Text = i.PriceofHour;
+                        }
+                    }
+
+                if (Classes.SelectedItem.ToString() == "Taxi")
+                    foreach (Taxi i in TaxiList)
+                    {
+                        if (i.NumberofTaxi == Organizations.SelectedItem.ToString())
+                        {
+                            NameBox.Text = i.Name;
+                            PhoneBox.Text = i.Phone;
+                            DriverNameBox.Text = i.DriverName;
+                            PriceofHourBox.Text = i.PriceofHour;
+                            PriceperkmBox.Text = i.Priceperkm;
+                            NumberBox.Text = i.NumberofTaxi;
+                        }
+                    }
+
+                if (Classes.SelectedItem.ToString() == "MiniBus")
+                    foreach (MiniBus i in MiniBusList)
+                    {
+                        if (i.NumberofMiniBus == Organizations.SelectedItem.ToString())
+                        {
+                            NameBox.Text = i.Name;
+                            PhoneBox.Text = i.Phone;
+                            DriverNameBox.Text = i.DriverName;
+                            PriceofHourBox.Text = i.PriceofHour;
+                            PriceperkmBox.Text = i.Size;
+                            NumberBox.Text = i.NumberofMiniBus;
+                        }
+                    }
+                if (Classes.SelectedItem.ToString() == "Bus")
+                    foreach (Bus i in BusList)
+                    {
+                        if (i.NumberofBus == Organizations.SelectedItem.ToString())
+                        {
+                            NameBox.Text = i.Name;
+                            PhoneBox.Text = i.Phone;
+                            DriverNameBox.Text = i.DriverName;
+                            PriceofHourBox.Text = i.PriceofHour;
+                            PriceperkmBox.Text = i.TicketPrice;
+                            NumberBox.Text = i.NumberofBus;
+                        }
+                    }
+                if (Classes.SelectedItem.ToString() == "Route")
+                    foreach (Route i in RouteList)
+                    {
+                        if (i.RouteNumber == Organizations.SelectedItem.ToString())
+                        {
+                            NameBox.Text = i.RouteBus.Name;
+                            PhoneBox.Text = i.RouteBus.Phone;
+                            DriverNameBox.Text = i.RouteBus.DriverName;
+                            PriceofHourBox.Text = i.RouteBus.PriceofHour;
+                            PriceperkmBox.Text = i.RouteBus.TicketPrice;
+                            NumberBox.Text = i.RouteBus.NumberofBus;
+                            RouteTimeBox.Text = i.RouteTime;
+                            RouteNumberBox.Text = i.RouteNumber;
+                        }
+                    }
             }
-
-            if (Classes.SelectedItem.ToString() == "Driver")
-                foreach (Driver i in DriverList)
-                {
-                    if (i.DriverName == Organizations.SelectedItem.ToString())
-                    {
-                        NameBox.Text = i.Name;
-                        PhoneBox.Text = i.Phone;
-                        DriverNameBox.Text = i.DriverName;
-                        PriceofHourBox.Text = i.PriceofHour;
-                    }
-                }
-
-            if (Classes.SelectedItem.ToString() == "Taxi")
-                foreach (Taxi i in TaxiList)
-                {
-                    if (i.NumberofTaxi == Organizations.SelectedItem.ToString())
-                    {
-                        NameBox.Text = i.Name;
-                        PhoneBox.Text = i.Phone;
-                        DriverNameBox.Text = i.DriverName;
-                        PriceofHourBox.Text = i.PriceofHour;
-                        PriceperkmBox.Text = i.Priceperkm;
-                        NumberBox.Text=i.NumberofTaxi;
-                    }
-                }
-
-            if (Classes.SelectedItem.ToString() == "MiniBus")
-                foreach (MiniBus i in MiniBusList)
-                {
-                    if (i.NumberofMiniBus == Organizations.SelectedItem.ToString())
-                    {
-                        NameBox.Text = i.Name;
-                        PhoneBox.Text = i.Phone;
-                        DriverNameBox.Text = i.DriverName;
-                        PriceofHourBox.Text = i.PriceofHour;
-                        PriceperkmBox.Text = i.Size;
-                        NumberBox.Text = i.NumberofMiniBus;
-                    }
-                }
-            if (Classes.SelectedItem.ToString() == "Bus")
-                foreach (Bus i in BusList)
-                {
-                    if (i.NumberofBus == Organizations.SelectedItem.ToString())
-                    {
-                        NameBox.Text = i.Name;
-                        PhoneBox.Text = i.Phone;
-                        DriverNameBox.Text = i.DriverName;
-                        PriceofHourBox.Text = i.PriceofHour;
-                        PriceperkmBox.Text = i.TicketPrice;
-                        NumberBox.Text = i.NumberofBus;
-                    }
-                }
-            if (Classes.SelectedItem.ToString() == "Route")
-                foreach (Route i in RouteList)
-                {
-                    if (i.RouteNumber == Organizations.SelectedItem.ToString())
-                    {
-                        NameBox.Text = i.RouteBus.Name;
-                        PhoneBox.Text = i.RouteBus.Phone;
-                        DriverNameBox.Text = i.RouteBus.DriverName;
-                        PriceofHourBox.Text = i.RouteBus.PriceofHour;
-                        PriceperkmBox.Text = i.RouteBus.TicketPrice;
-                        NumberBox.Text = i.RouteBus.NumberofBus;
-                        RouteTimeBox.Text = i.RouteTime;
-                        RouteNumberBox.Text = i.RouteNumber;
-                    }
-                }
+            catch
+            {
+            }
             
         }
 
@@ -906,6 +1143,70 @@ namespace WindowsFormsApplication1
                 RouteNumberBox.Show();
             }
 
+        }
+
+
+        private void Savesr_Click(object sender, EventArgs e)
+        {
+            if (saveFileDialog1.ShowDialog() == DialogResult.Cancel)
+                return;
+            string filename = saveFileDialog1.FileName;
+            Organizations.Items.Clear();
+            AllLists lists = new AllLists();
+            lists.SecOrganizationList = OrganizationList;
+            lists.SecDriverList = DriverList;
+            lists.SecTaxiList = TaxiList;
+            lists.SecMiniBusList = MiniBusList;
+            lists.SecBusList = BusList;
+            lists.SecRouteList = RouteList;
+            if (SaveLoadBox.SelectedItem.ToString() == "Binary")
+            {
+                BinarySerialization BS = new BinarySerialization();
+                BS.Serialize(lists, filename);
+            }
+            if (SaveLoadBox.SelectedItem.ToString() == "XML")
+            {
+                XMLSerialization XS = new XMLSerialization();
+                XS.Serialize(lists, filename);
+            }
+
+            if (SaveLoadBox.SelectedItem.ToString() == "Text")
+            {
+                TextSerialization TX = new TextSerialization();
+                TX.Serialize(lists, filename);
+
+            }
+        }
+
+        private void Loadsr_Click(object sender, EventArgs e)
+        {
+            Organizations.Items.Clear();
+            if (openFileDialog1.ShowDialog() == DialogResult.Cancel)
+            return;
+            string filename = openFileDialog1.FileName;
+            AllLists lists = new AllLists();
+            if (SaveLoadBox.SelectedItem.ToString() == "Binary")
+            {
+                BinarySerialization BS = new BinarySerialization();
+                lists = BS.Deserialize(filename);  
+            }
+
+            if (SaveLoadBox.SelectedItem.ToString() == "XML")
+            {
+                XMLSerialization XS = new XMLSerialization();
+                lists = XS.Deserialize(filename);                 
+            }
+            if (SaveLoadBox.SelectedItem.ToString() == "Text")
+            {
+                TextSerialization TX = new TextSerialization();
+                lists = TX.Deserialize(filename);   
+            }
+            OrganizationList = lists.SecOrganizationList;
+            DriverList = lists.SecDriverList;
+            TaxiList = lists.SecTaxiList;
+            MiniBusList = lists.SecMiniBusList;
+            BusList = lists.SecBusList;
+            RouteList = lists.SecRouteList;
         }
 
         
