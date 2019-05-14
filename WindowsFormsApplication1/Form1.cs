@@ -7,11 +7,25 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using System.IO.Compression;
+using System.Reflection;
+using System.Threading.Tasks;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml.Serialization;
 
 namespace WindowsFormsApplication1
 {
+    public interface IPlugins
+    {
+
+        string Name { get; }
+        string Format { get; }
+
+        void UsePlugin(string inputFile, string outputFile);
+
+        void DeUsePlugin(string inputFile, string outputFile);
+    }
+
     public partial class Form1 : Form
     {
         public Form1()
@@ -110,6 +124,7 @@ namespace WindowsFormsApplication1
             AllLists Deserialize(string Filepath);
         }
 
+
         public class BinarySerialization : ISerialization
         {
             public void Serialize(AllLists Lists, string path)
@@ -138,7 +153,7 @@ namespace WindowsFormsApplication1
             public void Serialize(AllLists Lists, string path)
             {
                 XmlSerializer OrganizationListSer = new XmlSerializer(typeof(AllLists));
-                using (FileStream fx = new FileStream("Organization.xml", FileMode.Create))
+                using (FileStream fx = new FileStream(path, FileMode.Create))
                 {
                     OrganizationListSer.Serialize(fx, Lists);
                 }
@@ -148,7 +163,7 @@ namespace WindowsFormsApplication1
             {
                 AllLists lists;
                 XmlSerializer OrganizationListDeSer = new XmlSerializer(typeof(AllLists));
-                using (FileStream fx = new FileStream("Organization.xml", FileMode.OpenOrCreate))
+                using (FileStream fx = new FileStream(Filepath, FileMode.OpenOrCreate))
                 {
                     lists = (AllLists)OrganizationListDeSer.Deserialize(fx);
                 }
@@ -161,11 +176,11 @@ namespace WindowsFormsApplication1
         {
             public void Serialize(AllLists Lists, string path)
             {
-                using (StreamWriter file = new StreamWriter("Organization.txt", false))
+                using (StreamWriter file = new StreamWriter(path, false))
                 {
                 }
                 
-                    using (StreamWriter file = new StreamWriter("Organization.txt", true))
+                    using (StreamWriter file = new StreamWriter(path, true))
                     {
                         file.WriteLine("<OrganizationList>");
                         foreach (Organization i in Lists.SecOrganizationList)
@@ -244,7 +259,7 @@ namespace WindowsFormsApplication1
                 List<Bus> BufBusList = new List<Bus>(0);
                 List<Route> BufRouteList = new List<Route>(0);
                 string line;
-                using (StreamReader file = new StreamReader("Organization.txt"))
+                using (StreamReader file = new StreamReader(Filepath))
                 {
                     while ((line = file.ReadLine()) != null)
                     {
@@ -464,6 +479,13 @@ namespace WindowsFormsApplication1
             #endregion
         }
 
+        public List<IPlugins> objects;
+        public List<Assembly> assemblies;
+        public List<Type> pluginTypes;
+        Type pluginType = typeof(IPlugins);
+        
+
+
         private void Form1_Load(object sender, EventArgs e)
         {
             Classes.Items.Add("Organization");
@@ -491,7 +513,59 @@ namespace WindowsFormsApplication1
             SaveLoadBox.Items.Add("Binary");
             SaveLoadBox.Items.Add("XML");
             SaveLoadBox.Items.Add("Text");
+            Plugins.Items.Add("None");
+            if (Directory.Exists(@"D:\foulder\ООТПиСП\2\WindowsFormsApplication1\Plugins"))
+            {
+                string[] dllFileNames = Directory.GetFiles(@"D:\foulder\ООТПиСП\2\WindowsFormsApplication1\Plugins", "*.dll", SearchOption.AllDirectories);
+                assemblies = new List<Assembly>(dllFileNames.Length);
+                int kost=2;
+                foreach (string dllFile in dllFileNames)
+                { 
+                    if(kost % 2 == 0)
+                    {
+                        AssemblyName name = AssemblyName.GetAssemblyName(dllFile);
+                        Assembly assembly = Assembly.Load(name);
+                        assemblies.Add(assembly);
+                    }
+                    kost++;
+                }
+                pluginTypes = new List<Type>();
+                foreach (Assembly assembly in assemblies)
+                {
+                    if (assembly != null)
+                    {
+                        Type[] types = assembly.GetTypes();
+                        foreach (Type type in types)
+                        {
+                            if (type.IsInterface || type.IsAbstract)
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                if (type.GetInterface(pluginType.FullName) != null)
+                                {
+                                    pluginTypes.Add(type);
+                                }
+                            }
+                        }
+                    }
+                }
+                objects = new List<IPlugins>(pluginTypes.Count);
+                foreach (Type type in pluginTypes)
+                {
+                    IPlugins plugin = (IPlugins)Activator.CreateInstance(type);
+                    objects.Add(plugin);
+                }
+                foreach (var item in objects)
+                {
+                    Plugins.Items.Add(item.Name);
+                }
 
+
+                
+
+            }
         }
 
         private void Organizations_Click(object sender, EventArgs e)
@@ -1148,6 +1222,7 @@ namespace WindowsFormsApplication1
 
         private void Savesr_Click(object sender, EventArgs e)
         {
+            string archedfilename;
             if (saveFileDialog1.ShowDialog() == DialogResult.Cancel)
                 return;
             string filename = saveFileDialog1.FileName;
@@ -1159,47 +1234,90 @@ namespace WindowsFormsApplication1
             lists.SecMiniBusList = MiniBusList;
             lists.SecBusList = BusList;
             lists.SecRouteList = RouteList;
+            archedfilename = filename;
             if (SaveLoadBox.SelectedItem.ToString() == "Binary")
             {
                 BinarySerialization BS = new BinarySerialization();
                 BS.Serialize(lists, filename);
+                archedfilename=filename.Replace(".dat","");
             }
             if (SaveLoadBox.SelectedItem.ToString() == "XML")
             {
                 XMLSerialization XS = new XMLSerialization();
                 XS.Serialize(lists, filename);
+                archedfilename=filename.Replace(".xml","");
             }
 
             if (SaveLoadBox.SelectedItem.ToString() == "Text")
             {
                 TextSerialization TX = new TextSerialization();
                 TX.Serialize(lists, filename);
+                archedfilename=filename.Replace(".txt","");
 
+            }
+            if (Plugins.SelectedItem.ToString() == "None")
+            {
+            }
+            else
+            {
+                foreach (var item in objects)
+                {
+                    if (Plugins.SelectedItem.ToString() == item.Name)
+                    {
+                        item.UsePlugin(filename, archedfilename + item.Format);
+                    }
+                }
             }
         }
 
         private void Loadsr_Click(object sender, EventArgs e)
         {
+
             Organizations.Items.Clear();
             if (openFileDialog1.ShowDialog() == DialogResult.Cancel)
             return;
             string filename = openFileDialog1.FileName;
+            string dearchedfilename = filename;
             AllLists lists = new AllLists();
+            
+                
+                foreach (var item in objects)
+                {
+                    if (filename.EndsWith(item.Format))
+                    {
+                        dearchedfilename = filename.Replace(item.Format,"");
+                        if (SaveLoadBox.SelectedItem.ToString() == "Binary")
+                        {
+                            dearchedfilename = dearchedfilename + ".dat";
+                        }
+
+                        if (SaveLoadBox.SelectedItem.ToString() == "XML")
+                        {
+                            dearchedfilename = dearchedfilename + ".xml";
+                        }
+                        if (SaveLoadBox.SelectedItem.ToString() == "Text")
+                        {
+                            dearchedfilename = dearchedfilename + ".txt";
+                        }
+                        item.DeUsePlugin(filename, dearchedfilename);
+                    }
+                }
+            
             if (SaveLoadBox.SelectedItem.ToString() == "Binary")
             {
                 BinarySerialization BS = new BinarySerialization();
-                lists = BS.Deserialize(filename);  
+                lists = BS.Deserialize(dearchedfilename);  
             }
 
             if (SaveLoadBox.SelectedItem.ToString() == "XML")
             {
                 XMLSerialization XS = new XMLSerialization();
-                lists = XS.Deserialize(filename);                 
+                lists = XS.Deserialize(dearchedfilename);                 
             }
             if (SaveLoadBox.SelectedItem.ToString() == "Text")
             {
                 TextSerialization TX = new TextSerialization();
-                lists = TX.Deserialize(filename);   
+                lists = TX.Deserialize(dearchedfilename);   
             }
             OrganizationList = lists.SecOrganizationList;
             DriverList = lists.SecDriverList;
@@ -1207,6 +1325,8 @@ namespace WindowsFormsApplication1
             MiniBusList = lists.SecMiniBusList;
             BusList = lists.SecBusList;
             RouteList = lists.SecRouteList;
+            File.Delete(dearchedfilename);
+            
         }
 
         

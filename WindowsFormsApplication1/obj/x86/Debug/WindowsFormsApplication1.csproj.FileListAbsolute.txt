@@ -7,3 +7,12 @@ D:\папка\ООТПиСП\2\WindowsFormsApplication1\obj\x86\Debug\WindowsFor
 D:\папка\ООТПиСП\2\WindowsFormsApplication1\obj\x86\Debug\WindowsFormsApplication1.pdb
 D:\папка\ООТПиСП\2\WindowsFormsApplication1\obj\x86\Debug\WindowsFormsApplication1.csprojResolveAssemblyReference.cache
 D:\папка\ООТПиСП\2\WindowsFormsApplication1\obj\x86\Debug\WindowsFormsApplication1.Form2.resources
+D:\foulder\ООТПиСП\2\WindowsFormsApplication1\obj\x86\Debug\WindowsFormsApplication1.exe
+D:\foulder\ООТПиСП\2\WindowsFormsApplication1\obj\x86\Debug\WindowsFormsApplication1.pdb
+D:\foulder\ООТПиСП\2\WindowsFormsApplication1\bin\Debug\WindowsFormsApplication1.exe
+D:\foulder\ООТПиСП\2\WindowsFormsApplication1\bin\Debug\WindowsFormsApplication1.pdb
+D:\foulder\ООТПиСП\2\WindowsFormsApplication1\obj\x86\Debug\WindowsFormsApplication1.Form1.resources
+D:\foulder\ООТПиСП\2\WindowsFormsApplication1\obj\x86\Debug\WindowsFormsApplication1.Form2.resources
+D:\foulder\ООТПиСП\2\WindowsFormsApplication1\obj\x86\Debug\WindowsFormsApplication1.Properties.Resources.resources
+D:\foulder\ООТПиСП\2\WindowsFormsApplication1\obj\x86\Debug\WindowsFormsApplication1.csproj.GenerateResource.Cache
+D:\foulder\ООТПиСП\2\WindowsFormsApplication1\obj\x86\Debug\WindowsFormsApplication1.csprojResolveAssemblyReference.cache

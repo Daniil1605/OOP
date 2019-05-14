@@ -54,6 +54,7 @@
             this.Loadsr = new System.Windows.Forms.Button();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.Plugins = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // Classes
@@ -265,11 +266,20 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
+            // Plugins
+            // 
+            this.Plugins.FormattingEnabled = true;
+            this.Plugins.Location = new System.Drawing.Point(54, 324);
+            this.Plugins.Name = "Plugins";
+            this.Plugins.Size = new System.Drawing.Size(121, 24);
+            this.Plugins.TabIndex = 26;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(690, 486);
+            this.Controls.Add(this.Plugins);
             this.Controls.Add(this.Loadsr);
             this.Controls.Add(this.Savesr);
             this.Controls.Add(this.SaveLoadBox);
@@ -331,6 +341,7 @@
         private System.Windows.Forms.Button Loadsr;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.ComboBox Plugins;
 
     }
 }

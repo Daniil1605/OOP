@@ -1,0 +1,7 @@
+D:\foulder\ООТПиСП\2\WindowsFormsApplication1\Plugins\Base\bin\Debug\Base.dll
+D:\foulder\ООТПиСП\2\WindowsFormsApplication1\Plugins\Base\bin\Debug\Base.pdb
+D:\foulder\ООТПиСП\2\WindowsFormsApplication1\Plugins\Base\bin\Debug\WindowsFormsApplication1.exe
+D:\foulder\ООТПиСП\2\WindowsFormsApplication1\Plugins\Base\bin\Debug\WindowsFormsApplication1.pdb
+D:\foulder\ООТПиСП\2\WindowsFormsApplication1\Plugins\Base\obj\Debug\Base.dll
+D:\foulder\ООТПиСП\2\WindowsFormsApplication1\Plugins\Base\obj\Debug\Base.pdb
+D:\foulder\ООТПиСП\2\WindowsFormsApplication1\Plugins\Base\obj\Debug\Base.csprojResolveAssemblyReference.cache

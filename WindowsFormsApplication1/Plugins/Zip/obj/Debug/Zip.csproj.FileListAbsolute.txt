@@ -1,0 +1,7 @@
+D:\foulder\ООТПиСП\2\WindowsFormsApplication1\Plugins\Zip\obj\Debug\Zip.csprojResolveAssemblyReference.cache
+D:\foulder\ООТПиСП\2\WindowsFormsApplication1\Plugins\Zip\bin\Debug\Zip.dll
+D:\foulder\ООТПиСП\2\WindowsFormsApplication1\Plugins\Zip\bin\Debug\Zip.pdb
+D:\foulder\ООТПиСП\2\WindowsFormsApplication1\Plugins\Zip\bin\Debug\WindowsFormsApplication1.exe
+D:\foulder\ООТПиСП\2\WindowsFormsApplication1\Plugins\Zip\bin\Debug\WindowsFormsApplication1.pdb
+D:\foulder\ООТПиСП\2\WindowsFormsApplication1\Plugins\Zip\obj\Debug\Zip.dll
+D:\foulder\ООТПиСП\2\WindowsFormsApplication1\Plugins\Zip\obj\Debug\Zip.pdb
